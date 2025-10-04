@@ -86,7 +86,7 @@ class _SplashViewState extends State<SplashView> {
                SvgPicture.asset(AppImages.splashScreen,height: 200,width: 100,),
 
                 SizedBox(height: 30,),
-                Lottie.asset("asstes/Morphing Particle Loader.json",height: 130),
+                Lottie.asset("assets/Morphing Particle Loader.json",height: 130),
               ],
             ),
           )

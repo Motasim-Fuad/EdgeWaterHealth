@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../View/HomeView/Home_view.dart';
 import '../View/FormView/FormView.dart';
 import '../View/ProfileView/profile_view.dart';
 import '../ViewModel/navBarController.dart';
+import 'DashBoardView/DashBoardView.dart';
 
 class APPNavBarView extends StatelessWidget {
   APPNavBarView({super.key});
@@ -12,8 +11,8 @@ class APPNavBarView extends StatelessWidget {
   final AppNavBarController controller = Get.put(AppNavBarController());
 
   final List<Widget> _pages = [
-    HomeView(),
-    Formview(),
+    DashboardView(),
+    NewReportView(),
     ProfileView(),
   ];
 
@@ -36,7 +35,7 @@ class APPNavBarView extends StatelessWidget {
         elevation: 9,
         shape: CircleBorder(),
         child: Image.asset(
-          'asstes/Form.png', // your image
+          'assets/Form.png', // your image
           height: 28,
           width: 28,
         ),
@@ -83,7 +82,7 @@ class APPNavBarView extends StatelessWidget {
                   ),
                   const SizedBox(width: 48,), // space for FAB
                   _buildBottomBarItem(
-                    image: 'asstes/pexels-olly-3785424.jpg',
+                    image: 'assets/pexels-olly-3785424.jpg',
                     label: 'Profile',
                     index: 2,
                     selectedColor: Colors.blue,
