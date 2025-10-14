@@ -19,7 +19,7 @@ class CrisisCallsView extends GetView<CrisisCallsController> {
         title: const Text(
           'Crisis Calls',
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),

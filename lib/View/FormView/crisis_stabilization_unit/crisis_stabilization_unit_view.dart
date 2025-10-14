@@ -18,7 +18,7 @@ class CrisisStabilizationView extends GetView<CrisisStabilizationController> {
         title: const Text(
           'Crisis Stabilization Unit',
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),

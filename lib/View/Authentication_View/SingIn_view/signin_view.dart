@@ -27,14 +27,6 @@ class SigninView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 20),
-
-                //nav
-                IconButton(onPressed: (){
-                  Get.toNamed(RouteName.appNavBarView);
-                }, icon: Icon(Icons.home)),
-
-
-
                 //logo
                 SvgPicture.asset(AppImages.splashScreen,height: 150,),
 

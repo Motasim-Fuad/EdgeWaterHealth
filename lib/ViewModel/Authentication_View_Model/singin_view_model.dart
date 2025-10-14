@@ -73,7 +73,7 @@ class SigninViewModel extends GetxController {
       );
 
       // Navigate to home or dashboard
-      // Get.offAllNamed('/home');
+      Get.offAllNamed(RouteName.appNavBarView);
 
     } catch (e) {
       Get.snackbar(
