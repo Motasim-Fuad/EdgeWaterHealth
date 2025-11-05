@@ -1,24 +1,25 @@
-import 'package:edgewaterhealth/Model/Authentication/user_model.dart';
+// lib/Model/Authentication/sinup_response_model.dart
+import 'package:edgewaterhealth/Data/nework_services.dart';
 
 class SignUpResponse {
   final bool success;
-  final String message;
-  final User? user;
-  final String? token;
+  final int statusCode;
+  final String? message;
+  final String? email;
 
   SignUpResponse({
     required this.success,
-    required this.message,
-    this.user,
-    this.token,
+    required this.statusCode,
+    this.message,
+    this.email,
   });
 
-  factory SignUpResponse.fromJson(Map<String, dynamic> json) {
+  factory SignUpResponse.fromApiResponse(ApiResponse apiResponse) {
     return SignUpResponse(
-      success: json['success'] ?? false,
-      message: json['message'] ?? '',
-      user: json['user'] != null ? User.fromJson(json['user']) : null,
-      token: json['token'],
+      success: apiResponse.success,
+      statusCode: apiResponse.statusCode ?? 0,
+      message: apiResponse.data?['message'] as String?,
+      email: apiResponse.data?['email'] as String?,
     );
   }
 }

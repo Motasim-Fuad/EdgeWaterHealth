@@ -1,8 +1,10 @@
+// lib/Data/network_services.dart
 import 'dart:convert';
+import 'package:edgewaterhealth/Services/StorageServices.dart';
 import 'package:http/http.dart' as http;
 
 class NetworkService {
-  static const String baseUrl = 'https://your-api-base-url.com/api';
+  static const String baseUrl = 'https://katheleen-unerrant-consolingly.ngrok-free.dev';
   static const Duration timeoutDuration = Duration(seconds: 30);
 
   // GET Request
@@ -11,7 +13,7 @@ class NetworkService {
       final uri = Uri.parse('$baseUrl$endpoint');
       final response = await http.get(
         uri,
-        headers: _getHeaders(headers),
+        headers: await _getHeaders(headers),
       ).timeout(timeoutDuration);
 
       return _handleResponse(response);
@@ -29,7 +31,7 @@ class NetworkService {
       final uri = Uri.parse('$baseUrl$endpoint');
       final response = await http.post(
         uri,
-        headers: _getHeaders(headers),
+        headers: await _getHeaders(headers),
         body: body != null ? json.encode(body) : null,
       ).timeout(timeoutDuration);
 
@@ -48,7 +50,7 @@ class NetworkService {
       final uri = Uri.parse('$baseUrl$endpoint');
       final response = await http.put(
         uri,
-        headers: _getHeaders(headers),
+        headers: await _getHeaders(headers),
         body: body != null ? json.encode(body) : null,
       ).timeout(timeoutDuration);
 
@@ -64,7 +66,7 @@ class NetworkService {
       final uri = Uri.parse('$baseUrl$endpoint');
       final response = await http.delete(
         uri,
-        headers: _getHeaders(headers),
+        headers: await _getHeaders(headers),
       ).timeout(timeoutDuration);
 
       return _handleResponse(response);
@@ -73,11 +75,17 @@ class NetworkService {
     }
   }
 
-  static Map<String, String> _getHeaders(Map<String, String>? customHeaders) {
+  static Future<Map<String, String>> _getHeaders(Map<String, String>? customHeaders) async {
     final headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
+
+    // Add token if available
+    final token = await StorageService.getToken();
+    if (token != null && token.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $token';
+    }
 
     if (customHeaders != null) {
       headers.addAll(customHeaders);
@@ -91,15 +99,22 @@ class NetworkService {
       final data = response.body.isNotEmpty ? json.decode(response.body) : null;
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        return ApiResponse.success(data);
+        return ApiResponse.success(
+          data,
+          statusCode: response.statusCode,
+        );
       } else {
         final errorMessage = data?['message'] ?? 'Request failed with status: ${response.statusCode}';
-        return ApiResponse.error(errorMessage, statusCode: response.statusCode);
+        return ApiResponse.error(
+          errorMessage,
+          statusCode: response.statusCode,
+        );
       }
     } catch (e) {
       return ApiResponse.error('Failed to parse response: ${e.toString()}');
     }
   }
+
 }
 
 // API Response Model
@@ -109,8 +124,8 @@ class ApiResponse {
   final String? message;
   final int? statusCode;
 
-  ApiResponse.success(this.data, {this.message})
-      : success = true, statusCode = null;
+  ApiResponse.success(this.data, {this.message, this.statusCode})
+      : success = true;
 
   ApiResponse.error(this.message, {this.statusCode})
       : success = false, data = null;

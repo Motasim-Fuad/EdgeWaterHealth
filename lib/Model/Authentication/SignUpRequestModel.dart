@@ -1,19 +1,26 @@
+// lib/Model/Authentication/SignUpRequestModel.dart
 class SignUpRequest {
-  final String fullName;
   final String email;
-  final String password;
+  final String? name;
+  final String? password;
+  final String? confirmPassword;
 
   SignUpRequest({
-    required this.fullName,
     required this.email,
-    required this.password,
+    this.name,
+    this.password,
+    this.confirmPassword,
   });
 
   Map<String, dynamic> toJson() {
-    return {
-      'full_name': fullName,
+    final Map<String, dynamic> data = {
       'email': email,
-      'password': password,
     };
+
+    if (name != null) data['name'] = name;
+    if (password != null) data['password'] = password;
+    if (confirmPassword != null) data['confirmPassword'] = confirmPassword;
+
+    return data;
   }
 }

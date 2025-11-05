@@ -276,14 +276,14 @@ class ForgotPasswordViewModel extends GetxController {
     resetToken.value = '';
   }
 
-  @override
-  void onClose() {
-    emailController.dispose();
-    newPasswordController.dispose();
-    confirmPasswordController.dispose();
-    for (var controller in otpControllers) {
-      controller.dispose();
-    }
-    super.onClose();
-  }
+  // @override
+  // void onClose() {
+  //   emailController.dispose();
+  //   newPasswordController.dispose();
+  //   confirmPasswordController.dispose();
+  //   for (var controller in otpControllers) {
+  //     controller.dispose();
+  //   }
+  //   super.onClose();
+  // }
 }
