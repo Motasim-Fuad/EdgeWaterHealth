@@ -13,6 +13,8 @@ import 'package:edgewaterhealth/View/splash_view/splash_view.dart';
 import 'package:edgewaterhealth/bindings/form/call_crisis_binding.dart';
 import 'package:edgewaterhealth/bindings/form/crisis_stabilization_binding.dart';
 import 'package:edgewaterhealth/bindings/form/mobile_crisis_binding.dart';
+import 'package:edgewaterhealth/bindings/singin.dart';
+import 'package:edgewaterhealth/bindings/singup.dart';
 import 'package:get/get.dart';
 
 class AppRouts {
@@ -45,6 +47,8 @@ class AppRouts {
     GetPage(
   name: RouteName.signinView,
   page: () => SigninView(),
+  binding: SignInBinding(),
+      preventDuplicates: true,
   transition: Transition.leftToRightWithFade,
   transitionDuration: Duration(microseconds: 250),
   ),
@@ -52,6 +56,9 @@ class AppRouts {
     GetPage(
   name: RouteName.signupView,
   page: () => SignUpView(),
+  binding: SignUpBinding(),
+      preventDuplicates: true,
+
   transition: Transition.leftToRightWithFade,
   transitionDuration: Duration(microseconds: 250),
   ),
@@ -59,6 +66,7 @@ class AppRouts {
     GetPage(
   name: RouteName.forgotPasswordView,
   page: () => ForgotPasswordView(),
+      preventDuplicates: true,
   transition: Transition.leftToRightWithFade,
   transitionDuration: Duration(microseconds: 250),
   ),

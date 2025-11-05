@@ -14,10 +14,7 @@ class NewReportView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Get.back(),
-        ),
+        automaticallyImplyLeading: false,
         title: Text(
           'New Report',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),

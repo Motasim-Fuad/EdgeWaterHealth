@@ -1,6 +1,6 @@
 import 'package:edgewaterhealth/Resources/AppComponents/app_button.dart';
 import 'package:edgewaterhealth/Resources/AppComponents/app_text_field.dart';
-import 'package:edgewaterhealth/ViewModel/Authentication_View_Model/forget_password_view_model.dart' show ForgotPasswordViewModel;
+import 'package:edgewaterhealth/ViewModel/Authentication_View_Model/forget_password_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -18,9 +18,7 @@ class GetOTPView extends StatelessWidget {
             size: 80,
             color: Color(0xFF7BC4D4),
           ),
-
           const SizedBox(height: 20),
-
           const Text(
             "Don't panic!",
             style: TextStyle(
@@ -28,9 +26,7 @@ class GetOTPView extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 10),
-
           const Text(
             "Enter your registered email address. We'll send you a verification code.",
             textAlign: TextAlign.center,
@@ -39,10 +35,7 @@ class GetOTPView extends StatelessWidget {
               color: Colors.grey,
             ),
           ),
-
           const SizedBox(height: 30),
-
-          // Email Form
           Form(
             key: controller.emailFormKey,
             child: CustomTextField(
@@ -54,10 +47,7 @@ class GetOTPView extends StatelessWidget {
               validator: controller.validateEmail,
             ),
           ),
-
           const SizedBox(height: 30),
-
-          // Get OTP Button
           Obx(() => RoundButton(
             title: "Get OTP",
             onPress: controller.sendResetPasswordOTP,

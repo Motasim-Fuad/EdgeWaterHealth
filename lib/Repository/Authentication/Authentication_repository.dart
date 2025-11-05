@@ -132,53 +132,7 @@ class AuthRepository {
     }
   }
 
-  // Forgot Password
-  static Future<SignUpResponse> forgotPassword(String email) async {
-    try {
-      final response = await NetworkService.post(
-        '/api/admin/forgot-password/sent-otp',
-        body: {'email': email},
-      );
 
-      print('Forgot Password API - StatusCode: ${response.statusCode}, Success: ${response.success}');
-      return SignUpResponse.fromApiResponse(response);
-    } catch (e) {
-      print('Forgot Password Error: $e');
-      return SignUpResponse(
-        success: false,
-        statusCode: 0,
-        message: 'An unexpected error occurred: ${e.toString()}',
-      );
-    }
-  }
-
-  // Reset Password
-  static Future<SignUpResponse> resetPassword({
-    required String email,
-    required String otp,
-    required String newPassword,
-  }) async {
-    try {
-      final response = await NetworkService.post(
-        '/api/admin/reset-password',
-        body: {
-          'email': email,
-          'otp': otp,
-          'newPassword': newPassword,
-        },
-      );
-
-      print('Reset Password API - StatusCode: ${response.statusCode}, Success: ${response.success}');
-      return SignUpResponse.fromApiResponse(response);
-    } catch (e) {
-      print('Reset Password Error: $e');
-      return SignUpResponse(
-        success: false,
-        statusCode: 0,
-        message: 'An unexpected error occurred: ${e.toString()}',
-      );
-    }
-  }
 
   // Logout
   static Future<void> logout() async {

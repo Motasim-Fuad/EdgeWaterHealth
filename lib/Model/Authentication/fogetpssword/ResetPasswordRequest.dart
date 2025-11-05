@@ -1,14 +1,13 @@
-// Reset Password Request Model
 class ResetPasswordRequest {
   final String email;
   final String otp;
-  final String newPassword;
+  final String password;
   final String confirmPassword;
 
   ResetPasswordRequest({
     required this.email,
     required this.otp,
-    required this.newPassword,
+    required this.password,
     required this.confirmPassword,
   });
 
@@ -16,8 +15,8 @@ class ResetPasswordRequest {
     return {
       'email': email,
       'otp': otp,
-      'new_password': newPassword,
-      'confirm_password': confirmPassword,
+      'password': password,
+      'confirmPassword': confirmPassword,
     };
   }
 }

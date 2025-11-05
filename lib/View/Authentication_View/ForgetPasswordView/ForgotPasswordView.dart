@@ -1,8 +1,7 @@
-// Main Forgot Password View
 import 'package:edgewaterhealth/View/Authentication_View/ForgetPasswordView/GetOTPView.dart';
-import 'package:edgewaterhealth/View/Authentication_View/ForgetPasswordView/OTPVerificationViewForgetPassword.dart' show OTPVerificationViewForgetPassword;
-import 'package:edgewaterhealth/View/Authentication_View/ForgetPasswordView/SetPasswordView.dart' show SetPasswordView;
-import 'package:edgewaterhealth/ViewModel/Authentication_View_Model/forget_password_view_model.dart' show ForgotPasswordViewModel;
+import 'package:edgewaterhealth/View/Authentication_View/ForgetPasswordView/OTPVerificationViewForgetPassword.dart';
+import 'package:edgewaterhealth/View/Authentication_View/ForgetPasswordView/SetPasswordView.dart';
+import 'package:edgewaterhealth/ViewModel/Authentication_View_Model/forget_password_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

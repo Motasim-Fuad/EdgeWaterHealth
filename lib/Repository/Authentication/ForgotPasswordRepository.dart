@@ -3,26 +3,25 @@ import 'package:edgewaterhealth/Model/Authentication/fogetpssword/ForgotPassword
 import 'package:edgewaterhealth/Model/Authentication/fogetpssword/ForgotPasswordResponse.dart';
 import 'package:edgewaterhealth/Model/Authentication/fogetpssword/ResetPasswordRequest.dart';
 import 'package:edgewaterhealth/Model/Authentication/fogetpssword/ResetPasswordResponse.dart';
-import 'package:edgewaterhealth/Model/Authentication/fogetpssword/VerifyResetOTPRequest.dart' show VerifyResetOTPRequest;
+import 'package:edgewaterhealth/Model/Authentication/fogetpssword/VerifyResetOTPRequest.dart';
 import 'package:edgewaterhealth/Model/Authentication/fogetpssword/VerifyResetOTPResponse.dart';
 
 class ForgotPasswordRepository {
   // Send Reset Password OTP
   static Future<ForgotPasswordResponse> sendResetPasswordOTP(ForgotPasswordRequest request) async {
     try {
-      final response = await NetworkService.post('/auth/forgot-password', body: request.toJson());
+      final response = await NetworkService.post(
+        '/api/users/send-forget-pass-otp',
+        body: request.toJson(),
+      );
 
-      if (response.success) {
-        return ForgotPasswordResponse.fromJson(response.data);
-      } else {
-        return ForgotPasswordResponse(
-          success: false,
-          message: response.message ?? 'Failed to send reset password OTP',
-        );
-      }
+      print('Send Reset OTP API - StatusCode: ${response.statusCode}, Success: ${response.success}');
+      return ForgotPasswordResponse.fromApiResponse(response);
     } catch (e) {
+      print('Send Reset OTP Error: $e');
       return ForgotPasswordResponse(
         success: false,
+        statusCode: 0,
         message: 'An unexpected error occurred: ${e.toString()}',
       );
     }
@@ -31,20 +30,18 @@ class ForgotPasswordRepository {
   // Verify Reset Password OTP
   static Future<VerifyResetOTPResponse> verifyResetOTP(VerifyResetOTPRequest request) async {
     try {
-      final response = await NetworkService.post('/auth/verify-reset-otp', body: request.toJson());
+      final response = await NetworkService.post(
+        '/api/users/verify-forget-pass-otp',
+        body: request.toJson(),
+      );
 
-      if (response.success) {
-        return VerifyResetOTPResponse.fromJson(response.data);
-      } else {
-        return VerifyResetOTPResponse(
-          success: false,
-          message: response.message ?? 'OTP verification failed',
-          isValidOTP: false,
-        );
-      }
+      print('Verify Reset OTP API - StatusCode: ${response.statusCode}, Success: ${response.success}');
+      return VerifyResetOTPResponse.fromApiResponse(response);
     } catch (e) {
+      print('Verify Reset OTP Error: $e');
       return VerifyResetOTPResponse(
         success: false,
+        statusCode: 0,
         message: 'An unexpected error occurred: ${e.toString()}',
         isValidOTP: false,
       );
@@ -54,30 +51,35 @@ class ForgotPasswordRepository {
   // Reset Password
   static Future<ResetPasswordResponse> resetPassword(ResetPasswordRequest request) async {
     try {
-      final response = await NetworkService.post('/auth/reset-password', body: request.toJson());
+      final response = await NetworkService.post(
+        '/api/users/reset-password',
+        body: request.toJson(),
+      );
 
-      if (response.success) {
-        return ResetPasswordResponse.fromJson(response.data);
-      } else {
-        return ResetPasswordResponse(
-          success: false,
-          message: response.message ?? 'Password reset failed',
-        );
-      }
+      print('Reset Password API - StatusCode: ${response.statusCode}, Success: ${response.success}');
+      return ResetPasswordResponse.fromApiResponse(response);
     } catch (e) {
+      print('Reset Password Error: $e');
       return ResetPasswordResponse(
         success: false,
+        statusCode: 0,
         message: 'An unexpected error occurred: ${e.toString()}',
       );
     }
   }
 
   // Resend Reset Password OTP
-  static Future<ApiResponse> resendResetOTP(String email) async {
+  static Future<ForgotPasswordResponse> resendResetOTP(String email) async {
     try {
-      return await NetworkService.post('/auth/resend-reset-otp', body: {'email': email});
+      final request = ForgotPasswordRequest(email: email);
+      return await sendResetPasswordOTP(request);
     } catch (e) {
-      return ApiResponse.error('An unexpected error occurred: ${e.toString()}');
+      print('Resend Reset OTP Error: $e');
+      return ForgotPasswordResponse(
+        success: false,
+        statusCode: 0,
+        message: 'An unexpected error occurred: ${e.toString()}',
+      );
     }
   }
 }

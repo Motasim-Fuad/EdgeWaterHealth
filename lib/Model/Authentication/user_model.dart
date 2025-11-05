@@ -1,39 +1,35 @@
 class User {
-  final String id;
-  final String fullName;
-  final String email;
-  final bool isEmailVerified;
+  final String? id;
+  final String? name;
+  final String? email;
   final String? profileImage;
-  final DateTime createdAt;
+  final String? status;
 
   User({
-    required this.id,
-    required this.fullName,
-    required this.email,
-    required this.isEmailVerified,
+    this.id,
+    this.name,
+    this.email,
     this.profileImage,
-    required this.createdAt,
+    this.status,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'].toString(),
-      fullName: json['full_name'] ?? '',
-      email: json['email'] ?? '',
-      isEmailVerified: json['is_email_verified'] ?? false,
-      profileImage: json['profile_image'],
-      createdAt: DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String()),
+      id: json['_id'] ?? json['id'],
+      name: json['name'],
+      email: json['email'],
+      profileImage: json['profileImage'],
+      status: json['status'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'full_name': fullName,
+      '_id': id,
+      'name': name,
       'email': email,
-      'is_email_verified': isEmailVerified,
-      'profile_image': profileImage,
-      'created_at': createdAt.toIso8601String(),
+      'profileImage': profileImage,
+      'status': status,
     };
   }
 }

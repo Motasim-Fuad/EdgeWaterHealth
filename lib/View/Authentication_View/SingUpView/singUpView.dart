@@ -12,7 +12,7 @@ class SignUpView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SignUpViewModel());
+    final controller = Get.find<SignUpViewModel>();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -20,12 +20,7 @@ class SignUpView extends StatelessWidget {
         title: const Text('Create new account'),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: Obx(() => controller.currentStep.value > 0
-            ? IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: controller.goBackToPreviousStep,
-        )
-            : const SizedBox.shrink()),
+        automaticallyImplyLeading: false,
       ),
       body: Obx(() {
         switch (controller.currentStep.value) {

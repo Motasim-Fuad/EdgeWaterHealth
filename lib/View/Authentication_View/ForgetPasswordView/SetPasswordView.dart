@@ -1,6 +1,6 @@
 import 'package:edgewaterhealth/Resources/AppComponents/app_button.dart';
-import 'package:edgewaterhealth/Resources/AppComponents/password_fields.dart' show PasswordField;
-import 'package:edgewaterhealth/ViewModel/Authentication_View_Model/forget_password_view_model.dart' show ForgotPasswordViewModel;
+import 'package:edgewaterhealth/Resources/AppComponents/password_fields.dart';
+import 'package:edgewaterhealth/ViewModel/Authentication_View_Model/forget_password_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -18,9 +18,7 @@ class SetPasswordView extends StatelessWidget {
             size: 80,
             color: Color(0xFF7BC4D4),
           ),
-
           const SizedBox(height: 20),
-
           const Text(
             "Unlock your account",
             style: TextStyle(
@@ -28,9 +26,7 @@ class SetPasswordView extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 10),
-
           const Text(
             "Set a strong new password to unlock your account",
             textAlign: TextAlign.center,
@@ -39,15 +35,11 @@ class SetPasswordView extends StatelessWidget {
               color: Colors.grey,
             ),
           ),
-
           const SizedBox(height: 30),
-
-          // Password Form
           Form(
             key: controller.passwordFormKey,
             child: Column(
               children: [
-                // New Password Field
                 PasswordField(
                   label: "New password",
                   hintText: "Enter new password",
@@ -55,10 +47,7 @@ class SetPasswordView extends StatelessWidget {
                   showStrengthIndicator: true,
                   validator: controller.validateNewPassword,
                 ),
-
                 const SizedBox(height: 20),
-
-                // Retype New Password Field
                 PasswordField(
                   label: "Retype new password",
                   hintText: "Retype new password",
@@ -69,10 +58,7 @@ class SetPasswordView extends StatelessWidget {
               ],
             ),
           ),
-
           const SizedBox(height: 30),
-
-          // Update Password Button
           Obx(() => RoundButton(
             title: "Update password",
             onPress: controller.resetPassword,

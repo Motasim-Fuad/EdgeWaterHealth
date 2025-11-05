@@ -1,7 +1,8 @@
-import 'package:edgewaterhealth/Model/Authentication/fogetpssword/ForgotPasswordRequest.dart' show ForgotPasswordRequest;
-import 'package:edgewaterhealth/Model/Authentication/fogetpssword/ResetPasswordRequest.dart' show ResetPasswordRequest;
-import 'package:edgewaterhealth/Model/Authentication/fogetpssword/VerifyResetOTPRequest.dart' show VerifyResetOTPRequest;
-import 'package:edgewaterhealth/Repository/Authentication/ForgotPasswordRepository.dart' show ForgotPasswordRepository;
+import 'package:edgewaterhealth/Model/Authentication/fogetpssword/ForgotPasswordRequest.dart';
+import 'package:edgewaterhealth/Model/Authentication/fogetpssword/ResetPasswordRequest.dart';
+import 'package:edgewaterhealth/Model/Authentication/fogetpssword/VerifyResetOTPRequest.dart';
+import 'package:edgewaterhealth/Repository/Authentication/ForgotPasswordRepository.dart';
+import 'package:edgewaterhealth/Resources/AppRoutes/routes_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,38 +22,26 @@ class ForgotPasswordViewModel extends GetxController {
   final isOTPVerifying = false.obs;
   final isPasswordResetting = false.obs;
   final isResendingOTP = false.obs;
-  final currentStep = 0.obs; // 0: email, 1: otp verification, 2: new password
+  final currentStep = 0.obs;
   final userEmail = ''.obs;
   final resetToken = ''.obs;
 
   // Validation methods
   String? validateEmail(String? value) {
-    if (value?.isEmpty ?? true) {
-      return 'Email is required';
-    }
-    if (!GetUtils.isEmail(value!)) {
-      return 'Please enter a valid email';
-    }
+    if (value?.isEmpty ?? true) return 'Email is required';
+    if (!GetUtils.isEmail(value!)) return 'Please enter a valid email';
     return null;
   }
 
   String? validateNewPassword(String? value) {
-    if (value?.isEmpty ?? true) {
-      return 'New password is required';
-    }
-    if (value!.length < 8) {
-      return 'Password must be at least 8 characters';
-    }
+    if (value?.isEmpty ?? true) return 'New password is required';
+    if (value!.length < 8) return 'Password must be at least 8 characters';
     return null;
   }
 
   String? validateConfirmPassword(String? value) {
-    if (value?.isEmpty ?? true) {
-      return 'Please confirm your password';
-    }
-    if (value != newPasswordController.text) {
-      return 'Passwords do not match';
-    }
+    if (value?.isEmpty ?? true) return 'Please confirm your password';
+    if (value != newPasswordController.text) return 'Passwords do not match';
     return null;
   }
 
@@ -69,36 +58,42 @@ class ForgotPasswordViewModel extends GetxController {
 
       final response = await ForgotPasswordRepository.sendResetPasswordOTP(request);
 
-      if (response.success) {
+      print('Send Reset OTP - Status: ${response.statusCode}, Success: ${response.success}');
+      print('Send Reset OTP - Message: ${response.message}');
+
+      if (response.success && (response.statusCode == 200 || response.statusCode == 201)) {
         userEmail.value = emailController.text.trim();
         if (response.resetToken != null) {
           resetToken.value = response.resetToken!;
         }
-        currentStep.value = 1; // Move to OTP verification step
+        currentStep.value = 1;
 
         Get.snackbar(
           'Success',
-          response.message,
+          response.message.isNotEmpty ? response.message : 'OTP sent to your email',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
+          margin: EdgeInsets.all(16),
         );
       } else {
         Get.snackbar(
           'Error',
-          response.message,
+          response.message.isNotEmpty ? response.message : 'Failed to send OTP',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
+          margin: EdgeInsets.all(16),
         );
       }
     } catch (e) {
       Get.snackbar(
         'Error',
-        'An unexpected error occurred: ${e.toString()}',
+        'An unexpected error occurred',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        margin: EdgeInsets.all(16),
       );
     } finally {
       isLoading.value = false;
@@ -114,6 +109,7 @@ class ForgotPasswordViewModel extends GetxController {
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        margin: EdgeInsets.all(16),
       );
       return;
     }
@@ -128,32 +124,39 @@ class ForgotPasswordViewModel extends GetxController {
 
       final response = await ForgotPasswordRepository.verifyResetOTP(request);
 
-      if (response.success && response.isValidOTP) {
-        currentStep.value = 2; // Move to new password step
+      print('Verify Reset OTP - Status: ${response.statusCode}, Success: ${response.success}');
+      print('Verify Reset OTP - Message: ${response.message}');
+      print('Verify Reset OTP - isValidOTP: ${response.isValidOTP}');
+
+      if (response.success && (response.statusCode == 200 || response.statusCode == 201) && response.isValidOTP) {
+        currentStep.value = 2;
 
         Get.snackbar(
           'Success',
-          'OTP verified successfully!',
+          response.message.isNotEmpty ? response.message : 'OTP verified successfully!',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
+          margin: EdgeInsets.all(16),
         );
       } else {
         Get.snackbar(
           'Error',
-          response.message,
+          response.message.isNotEmpty ? response.message : 'Invalid OTP',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
+          margin: EdgeInsets.all(16),
         );
       }
     } catch (e) {
       Get.snackbar(
         'Error',
-        'An unexpected error occurred: ${e.toString()}',
+        'An unexpected error occurred',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        margin: EdgeInsets.all(16),
       );
     } finally {
       isOTPVerifying.value = false;
@@ -172,42 +175,46 @@ class ForgotPasswordViewModel extends GetxController {
       final request = ResetPasswordRequest(
         email: userEmail.value,
         otp: otp,
-        newPassword: newPasswordController.text,
+        password: newPasswordController.text,
         confirmPassword: confirmPasswordController.text,
       );
 
       final response = await ForgotPasswordRepository.resetPassword(request);
 
-      if (response.success) {
+      print('Reset Password - Status: ${response.statusCode}, Success: ${response.success}');
+      print('Reset Password - Message: ${response.message}');
+
+      if (response.success && (response.statusCode == 200 || response.statusCode == 201)) {
         Get.snackbar(
           'Success',
-          'Password reset successfully!',
+          response.message.isNotEmpty ? response.message : 'Password reset successfully!',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
+          margin: EdgeInsets.all(16),
         );
 
-        // Clear all data
         _clearAllData();
-
-        // Navigate to sign in
-        Get.offAllNamed('/signin');
+        await Future.delayed(Duration(seconds: 1));
+        Get.offAllNamed(RouteName.signinView);
       } else {
         Get.snackbar(
           'Error',
-          response.message,
+          response.message.isNotEmpty ? response.message : 'Failed to reset password',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
+          margin: EdgeInsets.all(16),
         );
       }
     } catch (e) {
       Get.snackbar(
         'Error',
-        'An unexpected error occurred: ${e.toString()}',
+        'An unexpected error occurred',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        margin: EdgeInsets.all(16),
       );
     } finally {
       isPasswordResetting.value = false;
@@ -221,49 +228,50 @@ class ForgotPasswordViewModel extends GetxController {
 
       final response = await ForgotPasswordRepository.resendResetOTP(userEmail.value);
 
-      if (response.success) {
-        // Clear OTP fields
+      print('Resend Reset OTP - Status: ${response.statusCode}, Success: ${response.success}');
+      print('Resend Reset OTP - Message: ${response.message}');
+
+      if (response.success && (response.statusCode == 200 || response.statusCode == 201)) {
         for (var controller in otpControllers) {
           controller.clear();
         }
 
         Get.snackbar(
           'Success',
-          'OTP sent successfully!',
+          response.message.isNotEmpty ? response.message : 'OTP sent successfully!',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
+          margin: EdgeInsets.all(16),
         );
       } else {
         Get.snackbar(
           'Error',
-          response.message ?? 'Failed to resend OTP',
+          response.message.isNotEmpty ? response.message : 'Failed to resend OTP',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
+          margin: EdgeInsets.all(16),
         );
       }
     } catch (e) {
       Get.snackbar(
         'Error',
-        'An unexpected error occurred: ${e.toString()}',
+        'An unexpected error occurred',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        margin: EdgeInsets.all(16),
       );
     } finally {
       isResendingOTP.value = false;
     }
   }
 
-  // Go back to previous step
   void goBackToPreviousStep() {
-    if (currentStep.value > 0) {
-      currentStep.value--;
-    }
+    if (currentStep.value > 0) currentStep.value--;
   }
 
-  // Clear all data
   void _clearAllData() {
     emailController.clear();
     newPasswordController.clear();
@@ -276,14 +284,14 @@ class ForgotPasswordViewModel extends GetxController {
     resetToken.value = '';
   }
 
-  // @override
-  // void onClose() {
-  //   emailController.dispose();
-  //   newPasswordController.dispose();
-  //   confirmPasswordController.dispose();
-  //   for (var controller in otpControllers) {
-  //     controller.dispose();
-  //   }
-  //   super.onClose();
-  // }
+  @override
+  void onClose() {
+    emailController.dispose();
+    newPasswordController.dispose();
+    confirmPasswordController.dispose();
+    for (var controller in otpControllers) {
+      controller.dispose();
+    }
+    super.onClose();
+  }
 }

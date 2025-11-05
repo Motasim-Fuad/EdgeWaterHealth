@@ -4,6 +4,9 @@ import 'package:get/get.dart';
 class SignUpBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<SignUpViewModel>(() => SignUpViewModel());
+    Get.lazyPut<SignUpViewModel>(
+          () => SignUpViewModel(),
+      fenix: false,
+    );
   }
 }

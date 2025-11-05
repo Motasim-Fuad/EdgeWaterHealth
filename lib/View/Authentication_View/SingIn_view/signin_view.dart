@@ -3,7 +3,6 @@ import 'package:edgewaterhealth/Resources/AppAssets/images_assets.dart';
 import 'package:edgewaterhealth/Resources/AppColor/app_colors.dart';
 import 'package:edgewaterhealth/Resources/AppComponents/app_button.dart';
 import 'package:edgewaterhealth/Resources/AppComponents/app_text_field.dart';
-import 'package:edgewaterhealth/Resources/AppRoutes/routes_name.dart';
 import 'package:edgewaterhealth/ViewModel/Authentication_View_Model/singin_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -14,7 +13,7 @@ class SigninView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SigninViewModel());
+    final controller = Get.find<SigninViewModel>();
 
     return Scaffold(
       backgroundColor: Colors.white,

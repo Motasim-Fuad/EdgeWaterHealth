@@ -1,6 +1,5 @@
-// OTP Verification View (Step 2)
 import 'package:edgewaterhealth/Resources/AppComponents/app_button.dart';
-import 'package:edgewaterhealth/Resources/AppComponents/app_otp_field.dart' show OTPInputField;
+import 'package:edgewaterhealth/Resources/AppComponents/app_otp_field.dart';
 import 'package:edgewaterhealth/ViewModel/Authentication_View_Model/forget_password_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,9 +18,7 @@ class OTPVerificationViewForgetPassword extends StatelessWidget {
             size: 80,
             color: Color(0xFF7BC4D4),
           ),
-
           const SizedBox(height: 20),
-
           const Text(
             "OTP verification",
             style: TextStyle(
@@ -29,9 +26,7 @@ class OTPVerificationViewForgetPassword extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 10),
-
           const Text(
             "We've sent a code to your email. Enter it below to continue.",
             textAlign: TextAlign.center,
@@ -40,20 +35,14 @@ class OTPVerificationViewForgetPassword extends StatelessWidget {
               color: Colors.grey,
             ),
           ),
-
           const SizedBox(height: 30),
-
-          // OTP Input
           OTPInputField(
             controllers: controller.otpControllers,
             onCompleted: (otp) {
               controller.verifyResetOTP(otp);
             },
           ),
-
           const SizedBox(height: 30),
-
-          // Verify Button
           Obx(() => RoundButton(
             title: "Verify OTP",
             onPress: () {
@@ -67,10 +56,7 @@ class OTPVerificationViewForgetPassword extends StatelessWidget {
             width: double.infinity,
             buttonColor: const Color(0xFF7BC4D4),
           )),
-
           const SizedBox(height: 20),
-
-          // Resend OTP
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
