@@ -81,11 +81,13 @@ class CrisisStabilizationView extends GetView<CrisisStabilizationController> {
         if (field.isDropdown)
           Obx(() => AppDropdown<String>(
             items: controller.getDropdownItems(index),
-            selectedItem: controller.dropdownValues[index],
+            selectedItem: controller.dropdownValues[index].isEmpty ? null : controller.dropdownValues[index],
             hintText: 'Select an option',
             itemAsString: (item) => item,
             onChanged: (value) {
-              controller.dropdownValues[index] = value;
+              if (value != null) {
+                controller.dropdownValues[index] = value;
+              }
             },
           ))
         else

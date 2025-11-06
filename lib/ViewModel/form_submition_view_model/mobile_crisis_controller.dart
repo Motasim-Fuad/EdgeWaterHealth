@@ -1,3 +1,6 @@
+import 'package:edgewaterhealth/Model/submit_form_model/MobileCrisisModel.dart';
+import 'package:edgewaterhealth/Model/submit_form_model/form_models.dart';
+import 'package:edgewaterhealth/Repository/form/form_repository.dart';
 import 'package:edgewaterhealth/Resources/AppComponents/success_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,40 +8,83 @@ import 'package:get/get.dart';
 class MobileCrisisController extends GetxController {
   // Form fields data
   final formFields = <FormFieldData>[
-    FormFieldData(label: 'Referrals to Mobile Crisis', isDropdown: true),
-    FormFieldData(label: 'Number of Mobile Crisis Dispatches', isDropdown: false),
-    FormFieldData(label: 'Mobile Crisis Dispatches by County', isDropdown: true),
-    FormFieldData(label: 'Crisis Types', isDropdown: true),
-    FormFieldData(label: 'Outcome', isDropdown: true),
-    FormFieldData(label: 'Total Response Time', isDropdown: false),
-    FormFieldData(label: 'Mean Response Time', isDropdown: false),
-    FormFieldData(label: 'Total On-Scene Time', isDropdown: false),
-    FormFieldData(label: 'Mean On-Scene Time', isDropdown: false),
-    FormFieldData(label: 'Referrals Given', isDropdown: false),
-    FormFieldData(label: 'Referrals by Type', isDropdown: true),
-    FormFieldData(label: 'Referrals to Psychiatric', isDropdown: true),
-    FormFieldData(label: 'Follow-Up Contacts', isDropdown: false),
-    FormFieldData(label: 'Individuals Served', isDropdown: true),
-    FormFieldData(label: 'Client Primary Insurance', isDropdown: true),
+    FormFieldData(label: 'Referral Source', isDropdown: true, fieldType: FieldType.referralSource),
+    FormFieldData(label: 'Total Dispatches', isDropdown: false, fieldType: FieldType.number),
+    FormFieldData(label: 'Dispatch County', isDropdown: true, fieldType: FieldType.county),
+    FormFieldData(label: 'Crisis Type', isDropdown: true, fieldType: FieldType.crisisType),
+    FormFieldData(label: 'Outcome', isDropdown: true, fieldType: FieldType.outcome),
+    FormFieldData(label: 'Total Response Time (minutes)', isDropdown: false, fieldType: FieldType.time),
+    FormFieldData(label: 'Mean Response Time (minutes)', isDropdown: false, fieldType: FieldType.time),
+    FormFieldData(label: 'Total On Scene Time (minutes)', isDropdown: false, fieldType: FieldType.time),
+    FormFieldData(label: 'Mean On Scene Time (minutes)', isDropdown: false, fieldType: FieldType.time),
+    FormFieldData(label: 'Referrals Given', isDropdown: false, fieldType: FieldType.number),
+    FormFieldData(label: 'Referral Type', isDropdown: true, fieldType: FieldType.referralType),
+    FormFieldData(label: 'Naloxone Dispensations', isDropdown: false, fieldType: FieldType.number),
+    FormFieldData(label: 'Follow Up Contacts', isDropdown: false, fieldType: FieldType.number),
+    FormFieldData(label: 'Individuals Served', isDropdown: false, fieldType: FieldType.number),
+    FormFieldData(label: 'Primary Insurance', isDropdown: true, fieldType: FieldType.insurance),
+    FormFieldData(label: 'Age Group', isDropdown: true, fieldType: FieldType.ageGroup),
+    FormFieldData(label: 'Veteran Status', isDropdown: true, fieldType: FieldType.veteranStatus),
+    FormFieldData(label: 'Serving in Military', isDropdown: true, fieldType: FieldType.servingMilitary),
   ];
 
   // Text Controllers
   late List<TextEditingController> textControllers;
 
-  // Dropdown values
-  late RxList<String?> dropdownValues;
+  // Dropdown values - FIX: Change to RxList<String> instead of RxList<String?>
+  late RxList<String> dropdownValues;
 
   // Loading state
   final RxBool isLoading = false.obs;
 
-  // Dropdown options
-  final RxList<String> dropdownOptions = <String>[
-    'Option 1',
-    'Option 2',
-    'Option 3',
-    'Option 4',
-    'Option 5',
-  ].obs;
+  // Static data
+  final List<String> referralSources = [
+    "Law Enforcement/Justice System", "EMS", "Medical Hospitals", "Psychiatric Hospitals",
+    "Behavioral Health Providers", "Schools", "Department of Child Services", "Faith-Based Organizations",
+    "Housing Shelters", "Family and Friends", "Self", "Primary Healthcare", "Social Service Agency",
+    "988", "911", "Other",
+  ];
+
+  final List<String> counties = [
+    "adams co.", "allen co.", "bartholomew co.", "benton co.", "blackford co.",
+    "boone co.", "brown co.", "carroll co.", "cass co.", "clark co.",
+    // ... তোমার counties list
+  ];
+
+  final List<String> crisisTypes = [
+    "Suicide Risk", "At Risk of Hurting Others", "Adult Mental Health",
+    "Youth Mental Health", "Substance Use", "Other",
+  ];
+
+  final List<String> outcomes = [
+    "Stabilized in the Community", "Sent to a Crisis Stabilization Unit",
+    "Sent to the Emergency Room/Called EMS", "Law Enforcement Custody",
+    "Sent to an Inpatient Psychiatric Facility", "Sent to a Substance Use Treatment Facility", "Other",
+  ];
+
+  final List<String> referralTypes = [
+    "Social Service Agency", "Mental Health Services/Treatment", "Substance Use Treatment",
+    "Primary Health Care", "Domestic Violence Support", "Other",
+  ];
+
+  final List<String> primaryInsurances = [
+    "Medicaid (not dually-eligible)", "HIP", "Medicare (not dually-eligible)",
+    "Medicaid and Medicare (dually-eligible)", "Commercially Insured", "VHA/TRI Care",
+    "CHIP", "Uninsured", "Other",
+  ];
+
+  final List<String> ageGroups = [
+    "0–5 years", "6–12 years", "13–17 years", "18–20 years", "21–24 years",
+    "25–44 years", "45–64 years", "65 years or over", "Unknown",
+  ];
+
+  final List<String> veteranStatuses = [
+    "Yes", "No", "Not Applicable (Client under 18 years of age)",
+  ];
+
+  final List<String> servingInMilitaryStatuses = [
+    "Yes", "No", "Refused", "Not Applicable (Client under 18 years of age)",
+  ];
 
   @override
   void onInit() {
@@ -47,27 +93,43 @@ class MobileCrisisController extends GetxController {
       formFields.length,
           (index) => TextEditingController(),
     );
-    dropdownValues = List.generate(formFields.length, (index) => null).obs;
+    // FIX: Initialize with empty strings instead of null
+    dropdownValues = List.generate(formFields.length, (index) => '').obs;
   }
 
-  // Get form data
-  Map<String, dynamic> getFormData() {
-    Map<String, dynamic> data = {};
-    for (int i = 0; i < formFields.length; i++) {
-      if (formFields[i].isDropdown) {
-        data[formFields[i].label] = dropdownValues[i];
-      } else {
-        data[formFields[i].label] = textControllers[i].text;
-      }
+  // Get dropdown items based on field
+  List<String> getDropdownItems(int index) {
+    final fieldType = formFields[index].fieldType;
+
+    switch (fieldType) {
+      case FieldType.referralSource:
+        return referralSources;
+      case FieldType.county:
+        return counties;
+      case FieldType.crisisType:
+        return crisisTypes;
+      case FieldType.outcome:
+        return outcomes;
+      case FieldType.referralType:
+        return referralTypes;
+      case FieldType.insurance:
+        return primaryInsurances;
+      case FieldType.ageGroup:
+        return ageGroups;
+      case FieldType.veteranStatus:
+        return veteranStatuses;
+      case FieldType.servingMilitary:
+        return servingInMilitaryStatuses;
+      default:
+        return [];
     }
-    return data;
   }
 
   // Validate form
   bool validateForm() {
     for (int i = 0; i < formFields.length; i++) {
       if (formFields[i].isDropdown) {
-        if (dropdownValues[i] == null) {
+        if (dropdownValues[i].isEmpty) {
           Get.snackbar(
             'Validation Error',
             'Please select ${formFields[i].label}',
@@ -102,18 +164,46 @@ class MobileCrisisController extends GetxController {
     isLoading.value = true;
 
     try {
-      await Future.delayed(const Duration(seconds: 2));
+      final mobileCrisisData = MobileCrisisModel(
+        referralSource: dropdownValues[0],
+        totalDispatches: int.parse(textControllers[1].text),
+        dispatchCounty: dropdownValues[2],
+        crisisType: dropdownValues[3],
+        outcome: dropdownValues[4],
+        totalResponseTime: int.parse(textControllers[5].text),
+        meanResponseTime: int.parse(textControllers[6].text),
+        totalOnSceneTime: int.parse(textControllers[7].text),
+        meanOnSceneTime: int.parse(textControllers[8].text),
+        referralsGiven: int.parse(textControllers[9].text),
+        referralType: dropdownValues[10],
+        naloxoneDispensations: int.parse(textControllers[11].text),
+        followUpContacts: int.parse(textControllers[12].text),
+        individualsServed: int.parse(textControllers[13].text),
+        primaryInsurance: dropdownValues[14],
+        ageGroup: dropdownValues[15],
+        veteranStatus: dropdownValues[16],
+        servingInMilitary: dropdownValues[17],
+      );
 
-      final formData = getFormData();
-      print('Mobile Crisis Form Data: $formData');
+      final response = await ApiService.submitMobileCrisis(mobileCrisisData);
 
       isLoading.value = false;
 
-      // Show success dialog
-      SuccessDialog.show(
-        onPrimaryPressed: () => resetForm(),
-        onSecondaryPressed: () => Get.back(),
-      );
+      if (response.success) {
+        SuccessDialog.show(
+          onPrimaryPressed: () => resetForm(),
+          onSecondaryPressed: () => Get.back(),
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          response.message ?? 'Failed to submit mobile crisis data',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(16),
+        );
+      }
     } catch (e) {
       isLoading.value = false;
       Get.snackbar(
@@ -133,7 +223,7 @@ class MobileCrisisController extends GetxController {
       controller.clear();
     }
     for (int i = 0; i < dropdownValues.length; i++) {
-      dropdownValues[i] = null;
+      dropdownValues[i] = '';
     }
   }
 
@@ -144,15 +234,4 @@ class MobileCrisisController extends GetxController {
     }
     super.onClose();
   }
-}
-
-// Form field data model
-class FormFieldData {
-  final String label;
-  final bool isDropdown;
-
-  FormFieldData({
-    required this.label,
-    required this.isDropdown,
-  });
 }

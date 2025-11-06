@@ -78,12 +78,14 @@ class MobileCrisisView extends GetView<MobileCrisisController> {
         const SizedBox(height: 8),
         if (field.isDropdown)
           Obx(() => AppDropdown<String>(
-            items: controller.dropdownOptions,
-            selectedItem: controller.dropdownValues[index],
+            items: controller.getDropdownItems(index),
+            selectedItem: controller.dropdownValues[index].isEmpty ? null : controller.dropdownValues[index],
             hintText: 'Select an option',
             itemAsString: (item) => item,
             onChanged: (value) {
-              controller.dropdownValues[index] = value;
+              if (value != null) {
+                controller.dropdownValues[index] = value;
+              }
             },
           ))
         else
