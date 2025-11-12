@@ -6,7 +6,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
 class NetworkService {
-  static const String baseUrl = 'https://katheleen-unerrant-consolingly.ngrok-free.dev';
+  static const String baseUrl = 'http://206.162.244.133:5000';
   static const Duration timeoutDuration = Duration(seconds: 30);
 
   // GET Request
